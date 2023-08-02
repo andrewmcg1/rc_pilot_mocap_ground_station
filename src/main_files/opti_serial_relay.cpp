@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <getopt.h>
 #include <opti_serial_relay.hpp>
 #include "ntp_read.h"
@@ -179,6 +180,8 @@ int main(int argc, char** argv) {
   if (fd_w == -1) {
     usingWindVane = false;
   }
+
+  int test_id = 1;
   
 
   //////////////////////////////////////////////////////////////////////////////////////
@@ -189,6 +192,8 @@ int main(int argc, char** argv) {
   //                                                                                  //
   //////////////////////////////////////////////////////////////////////////////////////
   std::vector<int> fd(numQuads + 1, 0);
+
+  system("./scripts/pin_config"); // Set up GPIO pins for XBee
 
   for (int i = 1; i < numQuads + 1; i++) {
     fd[i] = serial_open(serialPort[i].c_str(), baudRate, 0);  // non-blocking reads
@@ -261,43 +266,17 @@ int main(int argc, char** argv) {
       optitrack_message_t fakeMsg;
 
       fakeMsg.id = i;
-
-      switch (i) {
-        case 1:
-          fakeMsg.x = 0;
-          fakeMsg.y = 0;
-          fakeMsg.z = 0;
-          break;
-        case 2:
-          fakeMsg.x = 1;
-          fakeMsg.y = 0;
-          fakeMsg.z = 0;
-          break;
-        case 3:
-          fakeMsg.x = 0;
-          fakeMsg.y = 1;
-          fakeMsg.z = 0;
-          break;
-        case 4:
-          fakeMsg.x = 0.5;
-          fakeMsg.y = 0.5;
-          fakeMsg.z = 0;
-          break;
-        case 5:
-          fakeMsg.x = 0.25;
-          fakeMsg.y = 0.25;
-          fakeMsg.z = 0;
-          break;
-      }
-
-      fakeMsg.qx = 0.0001;
-      fakeMsg.qy = 0.0001;
-      fakeMsg.qz = 0.0001;
-      fakeMsg.qw = 0.999;
+      fakeMsg.x = 0;
+      fakeMsg.y = 0;
+      fakeMsg.z = 0;
+      fakeMsg.qx = 0;
+      fakeMsg.qy = 0;
+      fakeMsg.qz = 0;
+      fakeMsg.qw = 1;
 
       fakeMsg.trackingValid = true;
-
-      //incomingMessages.push_back(fakeMsg);
+      
+      incomingMessages.push_back(fakeMsg);
     }
   }
 
@@ -338,7 +317,7 @@ int main(int argc, char** argv) {
   //                                                                          //
   //////////////////////////////////////////////////////////////////////////////
 
-  // Bool to check if we're stup signal handerls for SIGINT and SIGTERM
+  // Bool to check if we're stup signal handlers for SIGINT and SIGTERM
   // Catching these signals is important for reading NTP value at the end of the program
   bool initializedSignals = false;
 
@@ -361,36 +340,42 @@ int main(int argc, char** argv) {
 
         initializedSignals = true;
       }
-    } else {
-      // Fake Data
-      optitrack_message_t fakeMsg;
-
-      if (updateState(state, computeWeightsFlag, x_d, y_d, z_d)) return 1;
-
-      fakeMsg.id = 1;
-
-      //Stay at Origin
-      fakeMsg.x = x_d;
-      fakeMsg.y = y_d;
-      fakeMsg.z = z_d;
-
-      //Unit quaternion
-      fakeMsg.qx = 0;
-      fakeMsg.qy = 0;
-      fakeMsg.qz = 0;
-      fakeMsg.qw = 1;
-
-      fakeMsg.trackingValid = true;
-
-      incomingMessages.push_back(fakeMsg);
-    }
+    } 
 
     // Grab Time
     time64_u = utime_now();
     time_u = (uint32_t)time64_u;
 
     // Update State from Keyboard Input
-    if (testingFakeData && updateState(state, computeWeightsFlag, x_d, y_d, z_d)) return 1;
+    if (updateState(state, computeWeightsFlag, x_d, y_d, z_d, test_id)) return 1;
+
+    if(testingFakeData)
+    {
+      for (int i = 1; i < numQuads + 1; i++) 
+      {
+        optitrack_message_t fakeMsg;
+
+        fakeMsg.id = i;
+
+        //Stay at Origin
+        fakeMsg.x = x_d;
+        fakeMsg.y = y_d;
+        fakeMsg.z = z_d;
+
+        //Unit quaternion
+        fakeMsg.qx = 0;
+        fakeMsg.qy = 0;
+        fakeMsg.qz = 0;
+        fakeMsg.qw = 1;
+
+        fakeMsg.trackingValid = true;
+
+        incomingMessages[i - 1] = fakeMsg;
+      }
+
+      unsigned int microseconds = 20000;  // "60 Hz" data rate == 16.67 ms
+      usleep(microseconds);
+    }
 
     for (auto& msg : incomingMessages) {
       // Transform the data from Optitrack "Y-UP" To "North East Down" if
@@ -399,45 +384,18 @@ int main(int argc, char** argv) {
         frameTransformation(msg, Q_rotx_90, Q_rotx_90_inv);
       }
 
-      if (msg.id <= numQuads) {
-        // Construct XBee Packet
-        xb_msg[msg.id].time = time_u;
-        xb_msg[msg.id].x = msg.x;
-        xb_msg[msg.id].y = msg.y;
-        xb_msg[msg.id].z = msg.z;
-        xb_msg[msg.id].qx = msg.qx;
-        xb_msg[msg.id].qy = msg.qy;
-        xb_msg[msg.id].qz = msg.qz;
-        xb_msg[msg.id].qw = msg.qw;
-        xb_msg[msg.id].trackingValid = msg.trackingValid;
-        xb_msg[msg.id].state = state;
 
-        /** Prince TODO: Speak with Matt on adding this back in. Matt needs this
-        for Cooperative payload stuff, but in general, most people won't be
-        using this.
-        // Leader Message
-        if (msg.id <= 3) {
-          xb_msg[msg.id].x_d = x_d;
-          xb_msg[msg.id].y_d = y_d;
-          xb_msg[msg.id].z_d = z_d;
-        } else {  // Follower Message
-
-          // Re-compute Weights in standby
-          if (computeWeightsFlag) {
-            w[msg.id] = computeWeights(xb_msg, msg.id);
-          }
-
-          // Compute Desired Position from Weighted Sum of Neighbors
-          xb_msg[msg.id].x_d = 0;
-          xb_msg[msg.id].y_d = 0;
-          xb_msg[msg.id].z_d = 0;
-          for (int i = 1; i < numQuads + 1; i++) {
-            xb_msg[msg.id].x_d += w[msg.id][i] * xb_msg[i].x;
-            xb_msg[msg.id].y_d += w[msg.id][i] * xb_msg[i].y;
-            xb_msg[msg.id].z_d += w[msg.id][i] * xb_msg[i].z;
-          }
-        }
-        **/
+      if(msg.id <= numQuads) {
+          xb_msg[msg.id].time = time_u;
+          xb_msg[msg.id].x = msg.x;
+          xb_msg[msg.id].y = msg.y;
+          xb_msg[msg.id].z = msg.z;
+          xb_msg[msg.id].qx = msg.qx;
+          xb_msg[msg.id].qy = msg.qy;
+          xb_msg[msg.id].qz = msg.qz;
+          xb_msg[msg.id].qw = msg.qw;
+          xb_msg[msg.id].trackingValid = msg.trackingValid;
+          xb_msg[msg.id].state = state;
 
         // Construct Serial Message
         memcpy(dataPacket[msg.id], &(xb_msg[msg.id]),
@@ -448,17 +406,21 @@ int main(int argc, char** argv) {
 
         // Send Serial Message
         if (write(fd[msg.id], serialPacket[msg.id], packetLength) > 0) {
+          fsync(fd[msg.id]);
         } else
           printf("Error Serial Port %d: %d \n", msg.id, errno);
+
       }
     }
 
     computeWeightsFlag = 0;
 
     // Wait for all of the Serial Ports to finish writing ("flush" the data)
+    /**
     for (int i = 1; i < numQuads + 1; i++) {
       fsync(fd[i]);
     }
+    */
 
     // Print Message to Terminal if selected
     if (verbose) {
@@ -468,6 +430,7 @@ int main(int argc, char** argv) {
       }
       fflush(stdout);
     }
+    
 
     // Write to Log File is selected
     if (logging) {

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+main() 
+{
+    config-pin p9.11 uart
+    config-pin p9.13 uart
+
+    config-pin p9.24 uart
+    config-pin p9.26 uart
+
+    config-pin p9.21 uart
+    config-pin p9.22 uart
+
+    config-pin p8.37 uart
+    config-pin p8.38 uart
+
+    echo "UART pins configured"
+}
+
+main "$@"

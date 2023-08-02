@@ -75,32 +75,36 @@ void printXBeeMsg(xbee_packet_t &msg) {
 void printXBeeMsg(std::vector<xbee_packet_t> &msg) {
   printf("\r");
 
-  // Time
-  printf("%011u|", msg[1].time);
-
-  // State
-  printf("   %d   |", msg[1].state);
 
   // Valid Tracking
   for (unsigned i = 1; i < msg.size(); i++) {
+
+    // Time
+    printf("%011u|", msg[i].time);
+
+    // State
+    printf("   %d   |", msg[i].state);
+
     if (msg[i].trackingValid) {
       printf("       Y       |");
     } else {
       printf("       N       |");
     }
+    // Position
+    printf("%+07.3f|", msg[i].x);
+    printf("%+07.3f|", msg[i].y);
+    printf("%+07.3f|", msg[i].z);
+
+    // Quaternion
+    printf("%+07.4f|", msg[i].qw);
+    printf("%+07.4f|", msg[i].qx);
+    printf("%+07.4f|", msg[i].qy);
+    printf("%+07.4f|", msg[i].qz);
+
+    printf("\t");
   }
 
-  // Position
-  printf("%+07.3f|", msg[1].x);
-  printf("%+07.3f|", msg[1].y);
-  printf("%+07.3f|", msg[1].z);
-
-  // Quaternion
-  printf("%+07.4f|", msg[1].qw);
-  printf("%+07.4f|", msg[1].qx);
-  printf("%+07.4f|", msg[1].qy);
-  printf("%+07.4f|", msg[1].qz);
-
+  
 
   // // Desired Position (print last 2 quads)
   // int index = msg.size() - 1;

@@ -94,14 +94,31 @@ int getch()
 }
 */
 
-int updateState(int8_t &state, bool &computeWeightsFlag, float &x_d, float &y_d, float &z_d) {
+int updateState(int8_t &state, bool &computeWeightsFlag, float &x_d, float &y_d, float &z_d, int &id) {
     if (_kbhit()) {
         switch (getchar()) {
-            case 3: 
+            case '0': 
                 printf("\n\rExiting!\n\r");
                 //reset_terminal_mode();
                 return 1;
                 break;
+            // For multiple drones
+            case '1':
+                id = 1;
+                break;
+            case '2':
+                id = 2;
+                break;
+            case '3':
+                id = 3;
+                break;
+            case '4': 
+                id = 4;
+                break;
+            case '5':
+                id = 5;
+                break;
+
             case 's':   // STANDBY state
                 state = 0;
                 break;
