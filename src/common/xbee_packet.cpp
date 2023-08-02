@@ -4,7 +4,8 @@
 #include <unistd.h>   // read / write / sleep
 #include <string.h>   //memcpy
 
-void printXBeeMsg(xbee_packet_t &msg) {
+void printXBeeMsg(xbee_packet_t& msg)
+{
   printf("\r");
 
   // Time
@@ -56,59 +57,43 @@ void printXBeeMsg(xbee_packet_t &msg) {
   printf("   %d   |", msg.state);
 
   // // Desired Position
-<<<<<<< HEAD
-   if (msg.x_d < 0)
-     printf("%7.6f |", msg.x_d);
-   else
-     printf(" %7.6f |", msg.x_d);
-   if (msg.y_d < 0)
-     printf("%7.6f |", msg.y_d);
-   else
-     printf(" %7.6f |", msg.y_d);
-   if (msg.z_d < 0)
-     printf("%7.6f |", msg.z_d);
-   else
-     printf(" %7.6f |", msg.z_d);
-=======
-  // if (msg.x_d < 0)
-  //   printf("%7.6f |", msg.x_d);
-  // else
-  //   printf(" %7.6f |", msg.x_d);
-  // if (msg.y_d < 0)
-  //   printf("%7.6f |", msg.y_d);
-  // else
-  //   printf(" %7.6f |", msg.y_d);
-  // if (msg.z_d < 0)
-  //   printf("%7.6f |", msg.z_d);
-  // else
-  //   printf(" %7.6f |", msg.z_d);
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
+  if (msg.x_d < 0)
+    printf("%7.6f |", msg.x_d);
+  else
+    printf(" %7.6f |", msg.x_d);
+  if (msg.y_d < 0)
+    printf("%7.6f |", msg.y_d);
+  else
+    printf(" %7.6f |", msg.y_d);
+  if (msg.z_d < 0)
+    printf("%7.6f |", msg.z_d);
+  else
+    printf(" %7.6f |", msg.z_d);
 
   fflush(stdout);
 }
 
-void printXBeeMsg(std::vector<xbee_packet_t> &msg) {
+void printXBeeMsg(std::vector<xbee_packet_t>& msg)
+{
   printf("\r");
 
 
   // Valid Tracking
-<<<<<<< HEAD
   //for (unsigned i = 1; i < msg.size(); i++) {
   int i = 1;
   {
-=======
-  for (unsigned i = 1; i < msg.size(); i++) {
-
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
     // Time
     printf("%011u|", msg[i].time);
 
     // State
     printf("   %d   |", msg[i].state);
 
-    if (msg[i].trackingValid) {
+    if (msg[i].trackingValid)
+    {
       printf("       Y       |");
-    } else {
+    }
+    else
+    {
       printf("       N       |");
     }
     // Position
@@ -122,17 +107,14 @@ void printXBeeMsg(std::vector<xbee_packet_t> &msg) {
     printf("%+07.4f|", msg[i].qy);
     printf("%+07.4f|", msg[i].qz);
 
-<<<<<<< HEAD
     printf("%7.3f  |", msg[i].x_d);
     printf("%7.3f  |", msg[i].y_d);
     printf("%7.3f  |", msg[i].z_d);
     printf(" %1d |", msg[i].claw);
-=======
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
     printf("\t");
   }
 
-  
+
 
   // // Desired Position (print last 2 quads)
   // int index = msg.size() - 1;
@@ -141,22 +123,17 @@ void printXBeeMsg(std::vector<xbee_packet_t> &msg) {
   //   printf("%7.3f  |", msg[index - 1].y_d);
   //   printf("%7.3f  |", msg[index - 1].z_d);
   // }
-<<<<<<< HEAD
-  //printf("%7.3f  |", msg[i].x_d);
-  //printf("%7.3f  |", msg[i].y_d);
-  //printf("%7.3f  |", msg[i].z_d);
-=======
   // printf("%7.3f  |", msg[index].x_d);
   // printf("%7.3f  |", msg[index].y_d);
   // printf("%7.3f  |", msg[index].z_d);
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
 
-  
+
 
   fflush(stdout);
 }
 
-void printXBeeMsg_simple(std::vector<xbee_packet_t> &msg) {
+void printXBeeMsg_simple(std::vector<xbee_packet_t>& msg)
+{
   printf("\r");
 
   // Time
@@ -170,10 +147,14 @@ void printXBeeMsg_simple(std::vector<xbee_packet_t> &msg) {
     printf("%u |", msg[1].time);
 
   // Valid Tracking
-  for (unsigned i = 1; i < msg.size(); i++) {
-    if (msg[i].trackingValid) {
+  for (unsigned i = 1; i < msg.size(); i++)
+  {
+    if (msg[i].trackingValid)
+    {
       printf("  Y |");
-    } else {
+    }
+    else
+    {
       printf("  N |");
     }
   }
@@ -185,10 +166,10 @@ void printXBeeMsg_simple(std::vector<xbee_packet_t> &msg) {
 int set_xbee_dest_addr(int XBEE_portID, int xbeeAddr)
 {
   //Useful strings and buffers
-  char config_mode[] = "+++";
-  char dest_addr_read[] = "ATDL\r\n";
-  char cmd_null[] = "ATCN\r\n";
-  char xbee_resp[] = "OK";
+  char config_mode[ ] = "+++";
+  char dest_addr_read[ ] = "ATDL\r\n";
+  char cmd_null[ ] = "ATCN\r\n";
+  char xbee_resp[ ] = "OK";
 
   char dest_addr_cmd[80];
   char resp[10];
@@ -198,66 +179,62 @@ int set_xbee_dest_addr(int XBEE_portID, int xbeeAddr)
 
 
   printf("Programming XBee...\n");
-  
+
   sprintf(dest_addr_cmd, "ATDL %d\r\n", xbeeAddr);
-  if(!write(XBEE_portID,config_mode,sizeof(config_mode)-1))
+  if (!write(XBEE_portID, config_mode, sizeof(config_mode) - 1))
   {
     printf("Could not write to XBee\n");
     return -1;
   }
   usleep(1E5);
-  numBytesRead = read(XBEE_portID,resp,sizeof(resp));
-  if(numBytesRead == 0 || !strcmp(resp,xbee_resp))
+  numBytesRead = read(XBEE_portID, resp, sizeof(resp));
+  if (numBytesRead == 0 || !strcmp(resp, xbee_resp))
   {
     printf("Received Incorrect Response\n");
     return -2;
   }
 
-  if(write(XBEE_portID,dest_addr_cmd,sizeof(dest_addr_cmd)-1))
+  if (write(XBEE_portID, dest_addr_cmd, sizeof(dest_addr_cmd) - 1))
   {
     printf("Could not write to XBee\n");
     return -1;
   }
   usleep(1E5);
-  numBytesRead = read(XBEE_portID,resp,sizeof(resp));
-  if(numBytesRead == 0 || !strcmp(resp,xbee_resp))
+  numBytesRead = read(XBEE_portID, resp, sizeof(resp));
+  if (numBytesRead == 0 || !strcmp(resp, xbee_resp))
   {
     printf("Received Incorrect Response\n");
     return -2;
   }
 
-  if(write(XBEE_portID,dest_addr_read,sizeof(dest_addr_read)-1))
+  if (write(XBEE_portID, dest_addr_read, sizeof(dest_addr_read) - 1))
   {
     printf("Could not write to XBee\n");
     return -1;
   }
   usleep(1E5);
-  numBytesRead = read(XBEE_portID,resp,sizeof(resp));
-  
-  sprintf(dest_addr,"%d",xbeeAddr);
-  if(numBytesRead == 0 || !strcmp(resp,dest_addr))
+  numBytesRead = read(XBEE_portID, resp, sizeof(resp));
+
+  sprintf(dest_addr, "%d", xbeeAddr);
+  if (numBytesRead == 0 || !strcmp(resp, dest_addr))
   {
-    printf("Received Incorrect Response\n");  
+    printf("Received Incorrect Response\n");
     return -2;
   }
-    
-  if(write(XBEE_portID,cmd_null,sizeof(cmd_null)-1))
+
+  if (write(XBEE_portID, cmd_null, sizeof(cmd_null) - 1))
   {
     printf("Could not write to XBee\n");
     return -1;
   }
   usleep(1E5);
-  numBytesRead = read(XBEE_portID,resp,sizeof(resp));
-  if(numBytesRead == 0 || !strcmp(resp,xbee_resp))
+  numBytesRead = read(XBEE_portID, resp, sizeof(resp));
+  if (numBytesRead == 0 || !strcmp(resp, xbee_resp))
   {
     printf("Recieved Incorrect Response\n");
     return -2;
   }
-  printf("RESP:%s\n",resp);
+  printf("RESP:%s\n", resp);
 
   return 0;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c

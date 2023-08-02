@@ -8,14 +8,16 @@
 #include <stdio.h>
 #include <sys/select.h>
 #include <termios.h>
-// #include <stropts.h>
+ // #include <stropts.h>
 #include <sys/ioctl.h>
 
-int _kbhit() {
+int _kbhit()
+{
     static const int STDIN = 0;
     static bool initialized = false;
 
-    if (! initialized) {
+    if (!initialized)
+    {
         // Use termios to turn off line buffering
         termios term;
         tcgetattr(STDIN, &term);
@@ -63,11 +65,11 @@ void set_conio_terminal_mode()
 {
     struct termios new_termios;
 
-    // take two copies - one for now, one for later 
+    // take two copies - one for now, one for later
     tcgetattr(0, &orig_termios);
     memcpy(&new_termios, &orig_termios, sizeof(new_termios));
 
-    // register cleanup handler, and set the new terminal mode 
+    // register cleanup handler, and set the new terminal mode
     atexit(reset_terminal_mode);
     cfmakeraw(&new_termios);
     tcsetattr(0, TCSANOW, &new_termios);
@@ -94,105 +96,96 @@ int getch()
 }
 */
 
-<<<<<<< HEAD
-int updateState(int8_t &state, bool &computeWeightsFlag, float &x_d, float &y_d, float &z_d, int &id, int8_t& claw) {
-=======
-int updateState(int8_t &state, bool &computeWeightsFlag, float &x_d, float &y_d, float &z_d, int &id) {
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
-    if (_kbhit()) {
-        switch (getchar()) {
-            case '0': 
-                printf("\n\rExiting!\n\r");
-                //reset_terminal_mode();
-                return 1;
-                break;
+int updateState(int8_t& state, bool& computeWeightsFlag, float& x_d, float& y_d, float& z_d, int& id, int8_t& claw)
+{
+    if (_kbhit())
+    {
+        switch (getchar())
+        {
+        case '0':
+            printf("\n\rExiting!\n\r");
+            //reset_terminal_mode();
+            return 1;
+            break;
             // For multiple drones
-            case '1':
-                id = 1;
-                break;
-            case '2':
-                id = 2;
-                break;
-            case '3':
-                id = 3;
-                break;
-            case '4': 
-                id = 4;
-                break;
-            case '5':
-                id = 5;
-                break;
+        case '1':
+            id = 1;
+            break;
+        case '2':
+            id = 2;
+            break;
+        case '3':
+            id = 3;
+            break;
+        case '4':
+            id = 4;
+            break;
+        case '5':
+            id = 5;
+            break;
 
-<<<<<<< HEAD
-	    case 'q':
-		claw = 1;
-		break;
-	    case 'e':
-		claw = 0;
-		break;
-
-=======
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
-            case 's':   // STANDBY state
-                state = 0;
-                break;
-            case 't':   // TAKEOFF state
-                state = 1;
-                break;
-            case 'g':   // GUIDANCE state
-                state = 2;
-                break;
-            case 'l':   // LAND state
-                state = 3;
-                break;
-            case 'p':   // PAUSE state
-                state = 4;
-                break;
-            case 'n':   // NAILING state (for octo)
-                state = 5;
-                break;
-            case 'r':   // RETURN state (for octo)
-                state = 6;
-                break;
-            case ' ':   // Compute Weights
-                computeWeightsFlag = true;
-                break;
+        case 'q':
+            claw = 1;
+            break;
+        case 'e':
+            claw = 0;
+            break;
+        case 's':   // STANDBY state
+            state = 0;
+            break;
+        case 't':   // TAKEOFF state
+            state = 1;
+            break;
+        case 'g':   // GUIDANCE state
+            state = 2;
+            break;
+        case 'l':   // LAND state
+            state = 3;
+            break;
+        case 'p':   // PAUSE state
+            state = 4;
+            break;
+        case 'n':   // NAILING state (for octo)
+            state = 5;
+            break;
+        case 'r':   // RETURN state (for octo)
+            state = 6;
+            break;
+        case ' ':   // Compute Weights
+            computeWeightsFlag = true;
+            break;
 
             // CLI for posiion setpoint (testing follower mode)
-            case '@':   // Compute Weights
-                z_d += CLI_DES_POS_INCR;
-                break;
-            case 'X':   // Compute Weights
-                z_d -= CLI_DES_POS_INCR;
-                break;
-            case 'W':   // Compute Weights
-                x_d += CLI_DES_POS_INCR;
-                break;
-            case 'A':   // Compute Weights
-                y_d -= CLI_DES_POS_INCR;
-                break;
-            case 'S':   // Compute Weights
-                x_d -= CLI_DES_POS_INCR;
-                break;
-            case 'D':   // Compute Weights
-                y_d += CLI_DES_POS_INCR;
-                break;
-            case 'O':   // Compute Weights
-                x_d = 0;
-                y_d = 0;
-                z_d = 0;
-                break;
-            
+        case '@':   // Compute Weights
+            z_d += CLI_DES_POS_INCR;
+            break;
+        case 'X':   // Compute Weights
+            z_d -= CLI_DES_POS_INCR;
+            break;
+        case 'W':   // Compute Weights
+            x_d += CLI_DES_POS_INCR;
+            break;
+        case 'A':   // Compute Weights
+            y_d -= CLI_DES_POS_INCR;
+            break;
+        case 'S':   // Compute Weights
+            x_d -= CLI_DES_POS_INCR;
+            break;
+        case 'D':   // Compute Weights
+            y_d += CLI_DES_POS_INCR;
+            break;
+        case 'O':   // Compute Weights
+            x_d = 0;
+            y_d = 0;
+            z_d = 0;
+            break;
 
-            default :
-                break;
-                //printf("Input = %c \n\r",inputChar);
+
+        default:
+            break;
+            //printf("Input = %c \n\r",inputChar);
         }
     }
 
     return 0;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c

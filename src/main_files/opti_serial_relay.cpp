@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 #include <stdlib.h>
-#include <typeinfo>
 #include <getopt.h>
 #include <opti_serial_relay.hpp>
 #include "ntp_read.h"
@@ -17,59 +15,40 @@
 static bool keep_running = true;
 
 //This function is used to handle SIGINT (ctrl + c) and other terminal signals to exit cleanly
-=======
-    #include <stdlib.h>
-    #include <getopt.h>
-    #include <opti_serial_relay.hpp>
-    #include "ntp_read.h"
-    #include "signal.h" //For SIGINT and SIGTERM
-
-    //////////////////////////////////////////////////////////////////////////////
-    //                                                                          //
-    //                          SIGNAL HANDLER                                  //                  
-    //            (i.e. what do do when you catch a ctrl+C)                     //
-    //                                                                          //
-    //////////////////////////////////////////////////////////////////////////////
-
-    // Keep streaming mocap data until this bool is false
-    static bool keep_running = true;
-
-    //This function is used to handle SIGINT (ctrl + c) and other terminal signals to exit cleanly
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
 void signal_handler(int signum)
 {
     //Note: Stackoverflow recommends NOT adding print statements inside the signal handler
     //since printf is not reentrant. rc_pilot violates this rule and I (Prince) don't know enough about 
     //this to risk it. 
-    switch(signum)
+    switch (signum)
     {
         //SIGINT is |ctrl + c|
-        case SIGINT:
+    case SIGINT:
         keep_running = 0;
         break;
         //SIGTERM
-        case SIGTERM:
+    case SIGTERM:
         keep_running = 0;
         break;
     }
 }
 
-int main(int argc, char** argv) 
+int main(int argc, char** argv)
 {
-    const char* kInterfaceArg     = "interface";
-    const char* kSerialBaudArg    = "baudrate";
-    const char* kVerbose          = "verbose";
-    const char* kLogging          = "logging";
-    const char* kTransform        = "transform";
-    const char* kSerialPort1      = "serialPort1";
-    const char* kSerialPort2      = "serialPort2";
-    const char* kSerialPort3      = "serialPort3";
-    const char* kSerialPort4      = "serialPort4";
-    const char* kSerialPort5      = "serialPort5";
-    const char* kNumberOfQuads    = "numberOfQuads";
-    const char* kTestingFakeData  = "TestingFakeData";
-    const char* kNTP              = "networkTimeProtocol";
-    const char* kDeltaConfigPath  = "configPath";
+    const char* kInterfaceArg = "interface";
+    const char* kSerialBaudArg = "baudrate";
+    const char* kVerbose = "verbose";
+    const char* kLogging = "logging";
+    const char* kTransform = "transform";
+    const char* kSerialPort1 = "serialPort1";
+    const char* kSerialPort2 = "serialPort2";
+    const char* kSerialPort3 = "serialPort3";
+    const char* kSerialPort4 = "serialPort4";
+    const char* kSerialPort5 = "serialPort5";
+    const char* kNumberOfQuads = "numberOfQuads";
+    const char* kTestingFakeData = "TestingFakeData";
+    const char* kNTP = "networkTimeProtocol";
+    const char* kDeltaConfigPath = "configPath";
     // const char* kXbeeAddrArg = "xbeeAddr";
 
     getopt_t* gopt = getopt_create();
@@ -78,18 +57,18 @@ int main(int argc, char** argv)
         gopt, 'i', kInterfaceArg, "192.168.1.131",
         "Local network interface for connecting to Optitrack network");
     getopt_add_int(gopt, 'b', kSerialBaudArg, "57600",
-                    "Serial baudrate for communication via XBee");
+        "Serial baudrate for communication via XBee");
     getopt_add_bool(gopt, 'v', kVerbose, 0,
-                    "Print to terminal the Optitrack data");
+        "Print to terminal the Optitrack data");
     getopt_add_bool(gopt, 'l', kLogging, 0, "Save data to logfile");
     getopt_add_bool(gopt, 't', kTransform, 0,
-                    "Transform data from Y-Up to NED Frame");
+        "Transform data from Y-Up to NED Frame");
     getopt_add_string(gopt, '1', kSerialPort1, "/dev/ttyO1",
-                        "Serial port used to send the XBee packets out (Leader1)");
+        "Serial port used to send the XBee packets out (Leader1)");
     getopt_add_string(gopt, '2', kSerialPort2, "/dev/ttyO2",
-                        "Serial port used to send the XBee packets out (Leader2)");
+        "Serial port used to send the XBee packets out (Leader2)");
     getopt_add_string(gopt, '3', kSerialPort3, "/dev/ttyO3",
-                        "Serial port used to send the XBee packets out (Leader3)");
+        "Serial port used to send the XBee packets out (Leader3)");
     getopt_add_string(
         gopt, '4', kSerialPort4, "/dev/ttyO4",
         "Serial port used to send the XBee packets out (Follower1)");
@@ -97,22 +76,17 @@ int main(int argc, char** argv)
         gopt, '5', kSerialPort5, "/dev/ttyO5",
         "Serial port used to send the XBee packets out (Follower2)");
     getopt_add_string(
-<<<<<<< HEAD
-        gopt, 'c', kDeltaConfigPath, "NO_PATH", 
-       "Calibration file path for calibrating rigid body for delta arm");
-=======
-        gopt, 'c', kDeltaConfigPath, "/home/debian/mocapserialrelay_delta/config/delta.config", 
-       "Configuration file to calibrate rigid body for delta arm");
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
+        gopt, 'c', kDeltaConfigPath, "NO_PATH",
+        "Calibration file path for calibrating rigid body for delta arm");
     getopt_add_int(gopt, 'n', kNumberOfQuads, "2",
-                    "Number of bodies you are commanding");
+        "Number of bodies you are commanding");
     getopt_add_bool(gopt, 'T', kTestingFakeData, 0,
-                    "Send fake, hardcoded data instead of optitrack for testing");
+        "Send fake, hardcoded data instead of optitrack for testing");
     getopt_add_bool(gopt, 'N', kNTP, 0,
-                    "Read NTP offset from NTP server (aka HP laptop)");
+        "Read NTP offset from NTP server (aka HP laptop)");
     // getopt_add_int(gopt,'x',kXbeeAddrArg, "1", "Address of target XBee");
 
-    if (!getopt_parse(gopt, argc, argv, 1) || getopt_get_bool(gopt, "help")) 
+    if (!getopt_parse(gopt, argc, argv, 1) || getopt_get_bool(gopt, "help"))
     {
         printf("Usage: %s [options]", argv[0]);
         getopt_do_usage(gopt);
@@ -139,13 +113,9 @@ int main(int argc, char** argv)
     serialPort.push_back(getopt_get_string(gopt, kSerialPort4));
     serialPort.push_back(getopt_get_string(gopt, kSerialPort5));
 
-    if(numQuads > 2)
+    if (numQuads > 2)
     {
-<<<<<<< HEAD
         printf("Cannot use more than 2 bodies(drone and delta arm) with delta ground station\n");
-=======
-        printf("Cannot use more than 2(drone and delta arm) bodies with delta ground station\n");
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
         return 1;
     }
 
@@ -160,21 +130,13 @@ int main(int argc, char** argv)
     float deltaOffset[3];
 
     bool calibrated = false;
-<<<<<<< HEAD
     FILE* file;
-    if(testingFakeData)
-=======
-    if(0)//testingFakeData)
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
+    if (testingFakeData)
     {
         printf("Cannot calibrate delta arm with test data\n");
         printf("Not using calibration file\n");
     }
-<<<<<<< HEAD
-    else if(calibrationFile != "NO_PATH" && (file = fopen(calibrationFile.c_str(), "r")))
-=======
-    else if (FILE *file = fopen(calibrationFile.c_str(), "r")) 
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
+    else if (calibrationFile != "NO_PATH" && (file = fopen(calibrationFile.c_str(), "r")))
     {
         uint8_t buffer[20];
         fread(buffer, sizeof(uint8_t), 14, file);
@@ -182,25 +144,19 @@ int main(int argc, char** argv)
         uint8_t checksum1 = 0;
         uint8_t checksum2 = 0;
 
-        for(int i = 0; i < 12; i++)
+        for (int i = 0; i < 12; i++)
         {
             checksum1 += buffer[i];
             checksum2 += checksum1;
         }
 
-        if(checksum1 == buffer[12] && checksum2 == buffer[13])
+        if (checksum1 == buffer[12] && checksum2 == buffer[13])
         {
             memccpy(&deltaOffset, buffer, 0, 12);
             calibrated = true;
-<<<<<<< HEAD
-	    printf("Loaded offset values: %f %f %f\n", deltaOffset[0], deltaOffset[1], deltaOffset[2]);
+            printf("Loaded offset values: %f %f %f\n", deltaOffset[0], deltaOffset[1], deltaOffset[2]);
         }
         fclose(file);
-=======
-        }
-        fclose(file);
-        
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
     }
 
     //Initialize NTP variables
@@ -220,7 +176,7 @@ int main(int argc, char** argv)
     std::vector<char*> serialPacket(numQuads + 1, NULL);
     std::vector<char*> dataPacket(numQuads + 1, NULL);
 
-    for (int i = 1; i < numQuads + 1; i++) 
+    for (int i = 1; i < numQuads + 1; i++)
     {
         serialPacket[i] = new char[packetLength];
         serialPacket[i][0] = XBEE_START_BYTE1;
@@ -231,7 +187,7 @@ int main(int argc, char** argv)
     std::vector<xbee_packet_t> xb_msg(numQuads + 1, xbee_packet_t());
 
     // Grab Initial Time
-    uint64_t time64_u = (uint64_t) utime_now();
+    uint64_t time64_u = (uint64_t)utime_now();
     uint32_t time_u = (uint32_t)time64_u;
 
     // State variable for coordination of hardcoded waypoints onboard quads
@@ -242,11 +198,8 @@ int main(int argc, char** argv)
     float y_d = 0;
     float z_d = 0;
 
-<<<<<<< HEAD
     int8_t claw = 0;
 
-=======
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
     // Weights (for quads 4 and 5, the followers)
     // Let w*[0] be unused so indexing is more intuitive
     std::vector<std::vector<float>> w(numQuads + 1, std::vector<float>(6, 0));
@@ -273,15 +226,15 @@ int main(int argc, char** argv)
      * That aren't using the wind vane and need USB0
      * for XBees
      */
-    
-    int fd_w = -1; 
+
+    int fd_w = -1;
     if (fd_w == -1)
     {
         usingWindVane = false;
     }
 
     int test_id = 1;
-    
+
 
     //////////////////////////////////////////////////////////////////////////////////////
     //                                                                                  //
@@ -297,12 +250,12 @@ int main(int argc, char** argv)
     for (int i = 1; i < numQuads + 1; i++)
     {
         fd[i] = serial_open(serialPort[i].c_str(), baudRate, 0);  // non-blocking reads
-        if (fd[i] == -1) 
+        if (fd[i] == -1)
         {
             printf("Failed to open Serial Port%d: %s\n", i, serialPort[i].c_str());
             return 0;
-        } 
-        else 
+        }
+        else
         {
             printf("Successfully opened Serial Port%d: %s\n", i, serialPort[i].c_str());
         }
@@ -357,10 +310,6 @@ int main(int argc, char** argv)
         {
             printf("[optitrack_driver] successfully created socket for interface %s:%d\n", interface.c_str(), PORT_DATA);
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
     }
 
 
@@ -370,43 +319,40 @@ int main(int argc, char** argv)
     //                                                                          //
     //////////////////////////////////////////////////////////////////////////////
     // Calibrate the delta offset
-<<<<<<< HEAD
-    if(!calibrated)
-=======
-    if(!calibrated && !testingFakeData)
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
+    if (!calibrated && !testingFakeData)
     {
         float standby[3];
         standby[0] = 0;
         standby[1] = 0;
         standby[2] = -300;
 
-<<<<<<< HEAD
-	printf("Press ENTER when delta arm is in standby mode");
-	char c;
-	while((c=getchar()) != '\n') {}
+        <<<<<< < HEAD
+            printf("Press ENTER when delta arm is in standby mode");
+        char c;
+        while ((c = getchar()) != '\n') {}
 
-	printf("Waiting for Optitrack...\n");
+        printf("Waiting for Optitrack...\n");
         // Block until we receive a datagram from the network
         recvfrom(dataSocket, packet, sizeof(packet), 0, (sockaddr*)&incomingAddress, &addrLen);
         incomingMessages = parse_optitrack_packet_into_messages(packet, sizeof(packet));
-        if(transform) { 
-	    frameTransformation(incomingMessages[0], Q_rotx_90, Q_rotx_90_inv);
-	    frameTransformation(incomingMessages[1], Q_rotx_90, Q_rotx_90_inv);
-	}
+        if (transform)
+        {
+            frameTransformation(incomingMessages[0], Q_rotx_90, Q_rotx_90_inv);
+            frameTransformation(incomingMessages[1], Q_rotx_90, Q_rotx_90_inv);
+        }
 
-        deltaOffset[0] = (1 * (incomingMessages[1].x - incomingMessages[0].x) * 1000) - standby[0];
-        deltaOffset[1] = (-1 * (incomingMessages[1].y - incomingMessages[0].y) * 1000) - standby[1];
-        deltaOffset[2] = (-1 * (incomingMessages[1].z - incomingMessages[0].z) * 1000) - standby[2]; // Maybe multiply by -1
+        deltaOffset[0] = (incomingMessages[1].x - incomingMessages[0].x) * 1000 - standby[0];
+        deltaOffset[1] = (incomingMessages[1].y - incomingMessages[0].y) * -1000 - standby[1];
+        deltaOffset[2] = (incomingMessages[1].z - incomingMessages[0].z) * -1000 - standby[2]; // Maybe multiply by -1
 
         uint8_t checksum1 = 0;
         uint8_t checksum2 = 0;
 
-	calibrationFile = "config/delta.config";
+        calibrationFile = "config/delta.config";
 
         FILE* confFile = fopen(calibrationFile.c_str(), "w");
-	char* temp = (char*)deltaOffset;
-        for(int i = 0; i < sizeof(deltaOffset); i++)
+        char* temp = (char*)deltaOffset;
+        for (int i = 0; i < sizeof(deltaOffset); i++)
         {
             checksum1 += temp[i];
             checksum2 += checksum1;
@@ -415,33 +361,7 @@ int main(int argc, char** argv)
         fprintf(confFile, "%c", checksum1);
         fprintf(confFile, "%c", checksum2);
         fclose(confFile);
-	printf("Loaded offset values: %f %f %f\n", deltaOffset[0], deltaOffset[1], deltaOffset[2]);
-
-=======
-        printf("Hit Enter when delta arm is in standby position\n");
-        while(getchar() != '\n'){}
-
-        // Block until we receive a datagram from the network
-        recvfrom(dataSocket, packet, sizeof(packet), 0, (sockaddr*)&incomingAddress, &addrLen);
-        incomingMessages = parse_optitrack_packet_into_messages(packet, sizeof(packet));
-
-        deltaOffset[0] = (incomingMessages[1].x - incomingMessages[0].x) * 1000;
-        deltaOffset[1] = (incomingMessages[1].y - incomingMessages[0].y) * 1000;
-        deltaOffset[2] = (incomingMessages[1].z - incomingMessages[0].z) * 1000 + 300; // Maybe multiply by -1
-
-        uint8_t checksum1 = 0;
-        uint8_t checksum2 = 0;
-        FILE* file = fopen(calibrationFile.c_str(), "w");
-        for(int i = 0; i < sizeof(deltaOffset); i++)
-        {
-            checksum1 += deltaOffset[i];
-            checksum2 += checksum1;
-            fprintf(file, "%c", deltaOffset + i);
-        }
-        fprintf(file, "%c", checksum1);
-        fprintf(file, "%c", checksum2);
-        fclose(file);
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
+        printf("Loaded offset values: %f %f %f\n", deltaOffset[0], deltaOffset[1], deltaOffset[2]);
     }
 
 
@@ -457,7 +377,7 @@ int main(int argc, char** argv)
     if (verbose)
     {
         printCLIHeaders(numQuads);
-        if(useNTP)
+        if (useNTP)
         {
             printf("   NTP   |");
         }
@@ -470,12 +390,12 @@ int main(int argc, char** argv)
     //                                                                          //
     //////////////////////////////////////////////////////////////////////////////
     //Update NTP offset
-    if(useNTP)
+    if (useNTP)
     {
         ntp_offset = get_ntp_offset();
     }
 
-    
+
 
     //////////////////////////////////////////////////////////////////////////////
     //                                                                          //
@@ -500,11 +420,7 @@ int main(int argc, char** argv)
     while (keep_running)
     {
         // Update State from Keyboard Input
-<<<<<<< HEAD
-        if (updateState(state, computeWeightsFlag, x_d, y_d, z_d, test_id, claw)) 
-=======
-        if (updateState(state, computeWeightsFlag, x_d, y_d, z_d, test_id)) 
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
+        if (updateState(state, computeWeightsFlag, x_d, y_d, z_d, test_id, claw))
             return 1;
 
         // Grab time
@@ -512,13 +428,13 @@ int main(int argc, char** argv)
         time_u = (uint32_t)time64_u;
 
 
-        if(!testingFakeData)
+        if (!testingFakeData)
         {
             // Block until we receive a datagram from the network
             recvfrom(dataSocket, packet, sizeof(packet), 0, (sockaddr*)&incomingAddress, &addrLen);
             incomingMessages = parse_optitrack_packet_into_messages(packet, sizeof(packet));
 
-            if(initializedSignals == false)
+            if (initializedSignals == false)
             {
                 //Initialize signal handler for SIGNINT and SIGTERM before we start while(1)
                 //This is needed to read NTP offset one last time before program ends
@@ -530,7 +446,7 @@ int main(int argc, char** argv)
         }
         else
         {
-            for (int i = 1; i < numQuads + 1; i++) 
+            for (int i = 1; i < numQuads + 1; i++)
             {
                 optitrack_message_t fakeMsg;
 
@@ -554,36 +470,23 @@ int main(int argc, char** argv)
                 usleep(microseconds);
             }
         }
-<<<<<<< HEAD
-	if(transform) {
-            for (auto& msg : incomingMessages) {
+        if (transform)
+        {
+            for (auto& msg : incomingMessages)
+            {
                 frameTransformation(msg, Q_rotx_90, Q_rotx_90_inv);
-	    }
-	}
-=======
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
+            }
+        }
 
         for (auto& msg : incomingMessages)
         {
             // Transform the data from Optitrack "Y-UP" To "North East Down" if
             // selected
-<<<<<<< HEAD
-            //if (transform)
-            //{
-                //frameTransformation(msg, Q_rotx_90, Q_rotx_90_inv);
-            //}
-	        x_delta = (incomingMessages[1].x - incomingMessages[0].x) * 1000 - deltaOffset[0];
-	        y_delta = (incomingMessages[1].y - incomingMessages[0].y) * -1000 - deltaOffset[1];
-	        z_delta = (incomingMessages[1].z - incomingMessages[0].z) * -1000 - deltaOffset[2];
-=======
-            if (transform)
-            {
-                frameTransformation(msg, Q_rotx_90, Q_rotx_90_inv);
-            }
+            x_delta = (incomingMessages[1].x - incomingMessages[0].x) * 1000 - deltaOffset[0];
+            y_delta = (incomingMessages[1].y - incomingMessages[0].y) * -1000 - deltaOffset[1];
+            z_delta = (incomingMessages[1].z - incomingMessages[0].z) * -1000 - deltaOffset[2];
 
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
-
-            if(msg.id <= numQuads)
+            if (msg.id <= numQuads)
             {
                 // Construct XBee Packet
                 xb_msg[msg.id].time = time_u;
@@ -596,14 +499,11 @@ int main(int argc, char** argv)
                 xb_msg[msg.id].qw = msg.qw;
                 xb_msg[msg.id].trackingValid = msg.trackingValid;
                 xb_msg[msg.id].state = state;
-<<<<<<< HEAD
-		xb_msg[msg.id].claw = claw;
-=======
->>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
+                xb_msg[msg.id].claw = claw;
                 xb_msg[msg.id].x_d = x_delta;
                 xb_msg[msg.id].y_d = y_delta;
                 xb_msg[msg.id].z_d = z_delta;
-                
+
                 // Construct Serial Message
                 memcpy(dataPacket[msg.id], &(xb_msg[msg.id]), packetLength - NUM_FRAMING_BYTES);
 
@@ -634,51 +534,51 @@ int main(int argc, char** argv)
         if (verbose)
         {
             printXBeeMsg(xb_msg);
-            if(useNTP)
+            if (useNTP)
             {
                 printf("%+09.2lf|", ntp_offset);
             }
             fflush(stdout);
         }
-        
+
 
         // Write to Log File is selected
         if (logging)
         {
             logXBeeMsgs(fp, xb_msg, numQuads, w, fd_w, usingWindVane, wind);
-            fprintf(fp,"%" PRIu64 ",",time64_u);
-            fprintf(fp," %lf, ",ntp_offset);
+            fprintf(fp, "%" PRIu64 ",", time64_u);
+            fprintf(fp, " %lf, ", ntp_offset);
             fprintf(fp, "\n");
         }
 
     }//while(keep_running)
 
     //Commands to read and save one last NTP offset value before ending program
-    if(useNTP)
+    if (useNTP)
     {
-            //Read NTP offset one last time before exiting program
-            double old_ntp_offset = ntp_offset;
-            ntp_offset = get_ntp_offset();
+        //Read NTP offset one last time before exiting program
+        double old_ntp_offset = ntp_offset;
+        ntp_offset = get_ntp_offset();
 
-            // One last log to get last NTP offset
-            if (logging)
-            {
-                logXBeeMsgs(fp, xb_msg, numQuads, w, fd_w, usingWindVane, wind);
-                fprintf(fp,"%" PRIu64 ",",time64_u);
-                fprintf(fp," %lf, ",ntp_offset);
-                fprintf(fp, "\n");
-            }
+        // One last log to get last NTP offset
+        if (logging)
+        {
+            logXBeeMsgs(fp, xb_msg, numQuads, w, fd_w, usingWindVane, wind);
+            fprintf(fp, "%" PRIu64 ",", time64_u);
+            fprintf(fp, " %lf, ", ntp_offset);
+            fprintf(fp, "\n");
+        }
 
-            //One last output to see last NTP offset
-            if (verbose)
-            {
-                printXBeeMsg(xb_msg);
-                printf("%+09.2lf|", ntp_offset);
-                printf("\nNTP Offset from %4.4lf to %4.4lf\n", old_ntp_offset, ntp_offset); 
-                fflush(stdout);
-            }
+        //One last output to see last NTP offset
+        if (verbose)
+        {
+            printXBeeMsg(xb_msg);
+            printf("%+09.2lf|", ntp_offset);
+            printf("\nNTP Offset from %4.4lf to %4.4lf\n", old_ntp_offset, ntp_offset);
+            fflush(stdout);
+        }
     }
-    
+
 
 
     //////////////////////////////////////////////////////////////////////////////
@@ -692,4 +592,4 @@ int main(int argc, char** argv)
     // TODO: Should really close filestream used for logging
 
     return 0;
-    }
+}
