@@ -38,7 +38,7 @@ main() {
 	RC_PILOT_DIR="$SCRIPT_DIR/.."
 
 
-	BBB_DEST=$DEST:/home/debian/mocapserialrelay/
+	BBB_DEST=$DEST:/home/debian/mocapserialrelay_delta/
 	TMP_FILE=/tmp/include_files
 
 	# Folders and files to transfer to the beaglebone

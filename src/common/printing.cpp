@@ -149,7 +149,7 @@ void logXBeeMsgs(FILE *fp, std::vector<xbee_packet_t> xb_msg, int numQuads,
                  bool usingWindVane, char &wind) {
   for (int i = 1; i < numQuads + 1; i++) {
     fprintf(fp, " , ");
-    fprintf(fp, "%d, ", xb_msg[i].time);
+    fprintf(fp, "%u, ", xb_msg[i].time);
     fprintf(fp, "%7.6f, ", xb_msg[i].x);
     fprintf(fp, "%7.6f, ", xb_msg[i].y);
     fprintf(fp, "%7.6f, ", xb_msg[i].z);
