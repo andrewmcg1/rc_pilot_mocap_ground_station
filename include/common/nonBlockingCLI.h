@@ -94,7 +94,11 @@ int getch()
 }
 */
 
+<<<<<<< HEAD
 int updateState(int8_t &state, bool &computeWeightsFlag, float &x_d, float &y_d, float &z_d, int &id, int8_t& claw) {
+=======
+int updateState(int8_t &state, bool &computeWeightsFlag, float &x_d, float &y_d, float &z_d, int &id) {
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
     if (_kbhit()) {
         switch (getchar()) {
             case '0': 
@@ -119,6 +123,7 @@ int updateState(int8_t &state, bool &computeWeightsFlag, float &x_d, float &y_d,
                 id = 5;
                 break;
 
+<<<<<<< HEAD
 	    case 'q':
 		claw = 1;
 		break;
@@ -126,6 +131,8 @@ int updateState(int8_t &state, bool &computeWeightsFlag, float &x_d, float &y_d,
 		claw = 0;
 		break;
 
+=======
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
             case 's':   // STANDBY state
                 state = 0;
                 break;
@@ -184,4 +191,8 @@ int updateState(int8_t &state, bool &computeWeightsFlag, float &x_d, float &y_d,
     }
 
     return 0;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c

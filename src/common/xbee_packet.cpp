@@ -56,6 +56,7 @@ void printXBeeMsg(xbee_packet_t &msg) {
   printf("   %d   |", msg.state);
 
   // // Desired Position
+<<<<<<< HEAD
    if (msg.x_d < 0)
      printf("%7.6f |", msg.x_d);
    else
@@ -68,6 +69,20 @@ void printXBeeMsg(xbee_packet_t &msg) {
      printf("%7.6f |", msg.z_d);
    else
      printf(" %7.6f |", msg.z_d);
+=======
+  // if (msg.x_d < 0)
+  //   printf("%7.6f |", msg.x_d);
+  // else
+  //   printf(" %7.6f |", msg.x_d);
+  // if (msg.y_d < 0)
+  //   printf("%7.6f |", msg.y_d);
+  // else
+  //   printf(" %7.6f |", msg.y_d);
+  // if (msg.z_d < 0)
+  //   printf("%7.6f |", msg.z_d);
+  // else
+  //   printf(" %7.6f |", msg.z_d);
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
 
   fflush(stdout);
 }
@@ -77,9 +92,14 @@ void printXBeeMsg(std::vector<xbee_packet_t> &msg) {
 
 
   // Valid Tracking
+<<<<<<< HEAD
   //for (unsigned i = 1; i < msg.size(); i++) {
   int i = 1;
   {
+=======
+  for (unsigned i = 1; i < msg.size(); i++) {
+
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
     // Time
     printf("%011u|", msg[i].time);
 
@@ -102,10 +122,13 @@ void printXBeeMsg(std::vector<xbee_packet_t> &msg) {
     printf("%+07.4f|", msg[i].qy);
     printf("%+07.4f|", msg[i].qz);
 
+<<<<<<< HEAD
     printf("%7.3f  |", msg[i].x_d);
     printf("%7.3f  |", msg[i].y_d);
     printf("%7.3f  |", msg[i].z_d);
     printf(" %1d |", msg[i].claw);
+=======
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
     printf("\t");
   }
 
@@ -118,9 +141,15 @@ void printXBeeMsg(std::vector<xbee_packet_t> &msg) {
   //   printf("%7.3f  |", msg[index - 1].y_d);
   //   printf("%7.3f  |", msg[index - 1].z_d);
   // }
+<<<<<<< HEAD
   //printf("%7.3f  |", msg[i].x_d);
   //printf("%7.3f  |", msg[i].y_d);
   //printf("%7.3f  |", msg[i].z_d);
+=======
+  // printf("%7.3f  |", msg[index].x_d);
+  // printf("%7.3f  |", msg[index].y_d);
+  // printf("%7.3f  |", msg[index].z_d);
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
 
   
 
@@ -227,4 +256,8 @@ int set_xbee_dest_addr(int XBEE_portID, int xbeeAddr)
   printf("RESP:%s\n",resp);
 
   return 0;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c

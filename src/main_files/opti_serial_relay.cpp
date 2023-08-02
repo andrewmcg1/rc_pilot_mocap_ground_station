@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <stdlib.h>
 #include <typeinfo>
 #include <getopt.h>
@@ -16,6 +17,25 @@
 static bool keep_running = true;
 
 //This function is used to handle SIGINT (ctrl + c) and other terminal signals to exit cleanly
+=======
+    #include <stdlib.h>
+    #include <getopt.h>
+    #include <opti_serial_relay.hpp>
+    #include "ntp_read.h"
+    #include "signal.h" //For SIGINT and SIGTERM
+
+    //////////////////////////////////////////////////////////////////////////////
+    //                                                                          //
+    //                          SIGNAL HANDLER                                  //                  
+    //            (i.e. what do do when you catch a ctrl+C)                     //
+    //                                                                          //
+    //////////////////////////////////////////////////////////////////////////////
+
+    // Keep streaming mocap data until this bool is false
+    static bool keep_running = true;
+
+    //This function is used to handle SIGINT (ctrl + c) and other terminal signals to exit cleanly
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
 void signal_handler(int signum)
 {
     //Note: Stackoverflow recommends NOT adding print statements inside the signal handler
@@ -77,8 +97,13 @@ int main(int argc, char** argv)
         gopt, '5', kSerialPort5, "/dev/ttyO5",
         "Serial port used to send the XBee packets out (Follower2)");
     getopt_add_string(
+<<<<<<< HEAD
         gopt, 'c', kDeltaConfigPath, "NO_PATH", 
        "Calibration file path for calibrating rigid body for delta arm");
+=======
+        gopt, 'c', kDeltaConfigPath, "/home/debian/mocapserialrelay_delta/config/delta.config", 
+       "Configuration file to calibrate rigid body for delta arm");
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
     getopt_add_int(gopt, 'n', kNumberOfQuads, "2",
                     "Number of bodies you are commanding");
     getopt_add_bool(gopt, 'T', kTestingFakeData, 0,
@@ -116,7 +141,11 @@ int main(int argc, char** argv)
 
     if(numQuads > 2)
     {
+<<<<<<< HEAD
         printf("Cannot use more than 2 bodies(drone and delta arm) with delta ground station\n");
+=======
+        printf("Cannot use more than 2(drone and delta arm) bodies with delta ground station\n");
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
         return 1;
     }
 
@@ -131,13 +160,21 @@ int main(int argc, char** argv)
     float deltaOffset[3];
 
     bool calibrated = false;
+<<<<<<< HEAD
     FILE* file;
     if(testingFakeData)
+=======
+    if(0)//testingFakeData)
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
     {
         printf("Cannot calibrate delta arm with test data\n");
         printf("Not using calibration file\n");
     }
+<<<<<<< HEAD
     else if(calibrationFile != "NO_PATH" && (file = fopen(calibrationFile.c_str(), "r")))
+=======
+    else if (FILE *file = fopen(calibrationFile.c_str(), "r")) 
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
     {
         uint8_t buffer[20];
         fread(buffer, sizeof(uint8_t), 14, file);
@@ -155,9 +192,15 @@ int main(int argc, char** argv)
         {
             memccpy(&deltaOffset, buffer, 0, 12);
             calibrated = true;
+<<<<<<< HEAD
 	    printf("Loaded offset values: %f %f %f\n", deltaOffset[0], deltaOffset[1], deltaOffset[2]);
         }
         fclose(file);
+=======
+        }
+        fclose(file);
+        
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
     }
 
     //Initialize NTP variables
@@ -199,8 +242,11 @@ int main(int argc, char** argv)
     float y_d = 0;
     float z_d = 0;
 
+<<<<<<< HEAD
     int8_t claw = 0;
 
+=======
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
     // Weights (for quads 4 and 5, the followers)
     // Let w*[0] be unused so indexing is more intuitive
     std::vector<std::vector<float>> w(numQuads + 1, std::vector<float>(6, 0));
@@ -311,6 +357,10 @@ int main(int argc, char** argv)
         {
             printf("[optitrack_driver] successfully created socket for interface %s:%d\n", interface.c_str(), PORT_DATA);
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
     }
 
 
@@ -320,13 +370,18 @@ int main(int argc, char** argv)
     //                                                                          //
     //////////////////////////////////////////////////////////////////////////////
     // Calibrate the delta offset
+<<<<<<< HEAD
     if(!calibrated)
+=======
+    if(!calibrated && !testingFakeData)
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
     {
         float standby[3];
         standby[0] = 0;
         standby[1] = 0;
         standby[2] = -300;
 
+<<<<<<< HEAD
 	printf("Press ENTER when delta arm is in standby mode");
 	char c;
 	while((c=getchar()) != '\n') {}
@@ -362,6 +417,31 @@ int main(int argc, char** argv)
         fclose(confFile);
 	printf("Loaded offset values: %f %f %f\n", deltaOffset[0], deltaOffset[1], deltaOffset[2]);
 
+=======
+        printf("Hit Enter when delta arm is in standby position\n");
+        while(getchar() != '\n'){}
+
+        // Block until we receive a datagram from the network
+        recvfrom(dataSocket, packet, sizeof(packet), 0, (sockaddr*)&incomingAddress, &addrLen);
+        incomingMessages = parse_optitrack_packet_into_messages(packet, sizeof(packet));
+
+        deltaOffset[0] = (incomingMessages[1].x - incomingMessages[0].x) * 1000;
+        deltaOffset[1] = (incomingMessages[1].y - incomingMessages[0].y) * 1000;
+        deltaOffset[2] = (incomingMessages[1].z - incomingMessages[0].z) * 1000 + 300; // Maybe multiply by -1
+
+        uint8_t checksum1 = 0;
+        uint8_t checksum2 = 0;
+        FILE* file = fopen(calibrationFile.c_str(), "w");
+        for(int i = 0; i < sizeof(deltaOffset); i++)
+        {
+            checksum1 += deltaOffset[i];
+            checksum2 += checksum1;
+            fprintf(file, "%c", deltaOffset + i);
+        }
+        fprintf(file, "%c", checksum1);
+        fprintf(file, "%c", checksum2);
+        fclose(file);
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
     }
 
 
@@ -420,7 +500,11 @@ int main(int argc, char** argv)
     while (keep_running)
     {
         // Update State from Keyboard Input
+<<<<<<< HEAD
         if (updateState(state, computeWeightsFlag, x_d, y_d, z_d, test_id, claw)) 
+=======
+        if (updateState(state, computeWeightsFlag, x_d, y_d, z_d, test_id)) 
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
             return 1;
 
         // Grab time
@@ -470,16 +554,20 @@ int main(int argc, char** argv)
                 usleep(microseconds);
             }
         }
+<<<<<<< HEAD
 	if(transform) {
             for (auto& msg : incomingMessages) {
                 frameTransformation(msg, Q_rotx_90, Q_rotx_90_inv);
 	    }
 	}
+=======
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
 
         for (auto& msg : incomingMessages)
         {
             // Transform the data from Optitrack "Y-UP" To "North East Down" if
             // selected
+<<<<<<< HEAD
             //if (transform)
             //{
                 //frameTransformation(msg, Q_rotx_90, Q_rotx_90_inv);
@@ -487,6 +575,13 @@ int main(int argc, char** argv)
 	        x_delta = (incomingMessages[1].x - incomingMessages[0].x) * 1000 - deltaOffset[0];
 	        y_delta = (incomingMessages[1].y - incomingMessages[0].y) * -1000 - deltaOffset[1];
 	        z_delta = (incomingMessages[1].z - incomingMessages[0].z) * -1000 - deltaOffset[2];
+=======
+            if (transform)
+            {
+                frameTransformation(msg, Q_rotx_90, Q_rotx_90_inv);
+            }
+
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
 
             if(msg.id <= numQuads)
             {
@@ -501,7 +596,10 @@ int main(int argc, char** argv)
                 xb_msg[msg.id].qw = msg.qw;
                 xb_msg[msg.id].trackingValid = msg.trackingValid;
                 xb_msg[msg.id].state = state;
+<<<<<<< HEAD
 		xb_msg[msg.id].claw = claw;
+=======
+>>>>>>> be4882ca5e73411aae8f93a21ae0c1fc130def7c
                 xb_msg[msg.id].x_d = x_delta;
                 xb_msg[msg.id].y_d = y_delta;
                 xb_msg[msg.id].z_d = z_delta;
